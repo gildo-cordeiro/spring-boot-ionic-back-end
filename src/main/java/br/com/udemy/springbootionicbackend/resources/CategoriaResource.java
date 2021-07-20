@@ -2,7 +2,12 @@ package br.com.udemy.springbootionicbackend.resources;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import br.com.udemy.springbootionicbackend.services.CategoriaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,15 +17,14 @@ import br.com.udemy.springbootionicbackend.domain.Categoria;
 @RestController
 @RequestMapping(value = "/categorias")
 public class CategoriaResource {
-	
-	Categoria cat1 = new Categoria(1, "Informática");
-	Categoria cat2 = new Categoria(2, "Escritorio");
-	
-	List<Categoria> lista = List.of(cat1, cat2);
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public List<Categoria> listar() {
-		return lista;
+
+	@Autowired
+	CategoriaService service;
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public ResponseEntity<?> find(@PathVariable Integer id) {
+		Optional<Categoria> c = service.buscar(id);
+		return ResponseEntity.ok().body(c);
 	}
 	
 }

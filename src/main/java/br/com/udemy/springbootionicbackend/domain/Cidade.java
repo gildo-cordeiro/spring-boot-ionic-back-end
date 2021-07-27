@@ -1,5 +1,7 @@
 package br.com.udemy.springbootionicbackend.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -13,6 +15,7 @@ public class Cidade implements Serializable {
     private Integer id;
     private String nome;
 
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "id_estado")
     private Estado estado;
@@ -22,6 +25,8 @@ public class Cidade implements Serializable {
         this.nome = nome;
         this.estado = estado;
     }
+
+    public Cidade(){}
 
     public Integer getId() {
         return id;

@@ -41,6 +41,9 @@ public class SpringBootIonicBackEndApplication implements CommandLineRunner {
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
 
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
+
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootIonicBackEndApplication.class, args);
 	}
@@ -102,5 +105,17 @@ public class SpringBootIonicBackEndApplication implements CommandLineRunner {
 		pedidoRepository.saveAll(List.of(ped1, ped2));
 		pagamentoRepository.saveAll(List.of(pagto1, pagto2));
 
+		ItemPedido ip1 = new ItemPedido(ped1, p1, 0.0, 1, 2000.0);
+		ItemPedido ip2 = new ItemPedido(ped1, p3, 0.0, 2, 80.0);
+		ItemPedido ip3 = new ItemPedido(ped2, p2, 100.0, 1, 800.0);
+
+		ped1.getItens().addAll(List.of(ip1, ip2));
+		ped2.getItens().add(ip3);
+
+		p1.getItens().add(ip1);
+		p2.getItens().add(ip3);
+		p3.getItens().add(ip2);
+
+		itemPedidoRepository.saveAll(List.of(ip1, ip2, ip3));
 	}
 }

@@ -1,6 +1,7 @@
 package br.com.udemy.springbootionicbackend;
 
 import br.com.udemy.springbootionicbackend.domain.*;
+import br.com.udemy.springbootionicbackend.domain.enums.EstadoPagamento;
 import br.com.udemy.springbootionicbackend.domain.enums.TipoCliente;
 import br.com.udemy.springbootionicbackend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @SpringBootApplication
@@ -31,6 +34,12 @@ public class SpringBootIonicBackEndApplication implements CommandLineRunner {
 
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+
+	@Autowired
+	private PedidoRepository pedidoRepository;
+
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootIonicBackEndApplication.class, args);
@@ -78,6 +87,20 @@ public class SpringBootIonicBackEndApplication implements CommandLineRunner {
 
 		clienteRepository.save(cli1);
 		enderecoRepository.saveAll(Arrays.asList(e1, e2));
+
+		Pedido ped1 = new Pedido(null, new Date(), cli1, e1);
+		Pedido ped2 = new Pedido(null, new Date(), cli1, e2);
+
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pagto1);
+
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, new Date(), null);
+		ped2.setPagamento(pagto2);
+
+		cli1.getPedidos().addAll(List.of(ped1, ped2));
+
+		pedidoRepository.saveAll(List.of(ped1, ped2));
+		pagamentoRepository.saveAll(List.of(pagto1, pagto2));
 
 	}
 }

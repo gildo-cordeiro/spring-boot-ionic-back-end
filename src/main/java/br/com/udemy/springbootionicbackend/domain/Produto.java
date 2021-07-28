@@ -1,6 +1,7 @@
 package br.com.udemy.springbootionicbackend.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -25,6 +26,7 @@ public class Produto implements Serializable {
     )
     private List<Categoria> categorias = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "id.produto")
     private Set<ItemPedido> itens = new HashSet<>();
 
@@ -32,10 +34,11 @@ public class Produto implements Serializable {
 
     }
 
+    @JsonIgnore
     public List<Pedido> getPedidos(){
-        List<Pedido> pedidos = new ArrayList<>();
-        itens.stream().forEach(i -> pedidos.add(i.getPedido()));
-        return pedidos;
+        List<Pedido> lista = new ArrayList<>();
+        itens.stream().forEach(i -> lista.add(i.getPedido()));
+        return lista;
     }
 
     public Produto(Integer id, String nome, Double preco) {

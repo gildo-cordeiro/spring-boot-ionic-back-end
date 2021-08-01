@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import br.com.udemy.springbootionicbackend.dto.CategoriaDTO;
 import br.com.udemy.springbootionicbackend.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,15 +26,6 @@ public class CategoriaResource {
 	public ResponseEntity<Optional<Categoria>> buscar(@PathVariable Integer id) {
 		Optional<Categoria> c = service.buscar(id);
 		return ResponseEntity.ok().body(c);
-	}
-
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<CategoriaDTO>> buscarTodos() {
-		List<Categoria> list = service.buscarTodos();
-		List<CategoriaDTO> listDTO = list.stream().map(obj -> new CategoriaDTO(obj))
-				.collect(Collectors.toList());
-
-		return ResponseEntity.ok().body(listDTO);
 	}
 
 	/*
@@ -62,4 +54,23 @@ public class CategoriaResource {
 		return ResponseEntity.noContent().build();
 	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<List<CategoriaDTO>> buscarTodos() {
+		List<Categoria> list = service.buscarTodos();
+		List<CategoriaDTO> listDTO = list.stream().map(obj -> new CategoriaDTO(obj))
+				.collect(Collectors.toList());
+
+		return ResponseEntity.ok().body(listDTO);
+	}
+
+	@RequestMapping(value = "/page", method = RequestMethod.GET)
+	public ResponseEntity<Page<CategoriaDTO>> buscarPagina(
+			@RequestParam(name = "page", defaultValue = "0") Integer page,
+			@RequestParam(name = "linhasPorLinha", defaultValue = "24") Integer linhasPorLinha,
+			@RequestParam(name = "ordernador", defaultValue = "nome") String ordernador,
+			@RequestParam(name = "direcao", defaultValue = "ASC") String direcao) {
+		Page<Categoria> list = service.buscarPagina(page, linhasPorLinha, ordernador, direcao);
+		Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj));
+		return ResponseEntity.ok().body(listDTO);
+	}
 }

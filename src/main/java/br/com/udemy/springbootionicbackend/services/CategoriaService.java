@@ -5,6 +5,9 @@ import br.com.udemy.springbootionicbackend.repositories.CategoriaRepository;
 import br.com.udemy.springbootionicbackend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,14 +23,6 @@ public class CategoriaService {
         Optional<Categoria> obj = repository.findById(id);
         return Optional.ofNullable(obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado! Id:" + id
                 + ", Tipo: " + Categoria.class.getName())));
-    }
-
-    public List<Categoria> buscarTodos(){
-       List<Categoria> list = repository.findAll();
-       if(!list.isEmpty())
-           return list;
-
-       throw new ObjectNotFoundException("Não há categorias");
     }
 
     public Categoria inserir(Categoria categoria){
@@ -46,5 +41,18 @@ public class CategoriaService {
         }catch (DataIntegrityViolationException e){
             throw new ObjectNotFoundException("Não é possível excluir uma categoria que possui produtos");
         }
+    }
+
+    public List<Categoria> buscarTodos(){
+        List<Categoria> list = repository.findAll();
+        if(!list.isEmpty())
+            return list;
+
+        throw new ObjectNotFoundException("Não há categorias");
+    }
+
+    public Page<Categoria> buscarPagina(Integer page, Integer linhasPorLinha, String ordernador, String direcao){
+        PageRequest pageRequest = PageRequest.of(page, linhasPorLinha, Sort.Direction.valueOf(direcao), ordernador);
+        return repository.findAll(pageRequest);
     }
 }

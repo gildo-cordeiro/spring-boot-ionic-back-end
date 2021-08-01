@@ -1,18 +1,18 @@
 package br.com.udemy.springbootionicbackend.resources;
 
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import br.com.udemy.springbootionicbackend.dto.CategoriaDTO;
 import br.com.udemy.springbootionicbackend.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import br.com.udemy.springbootionicbackend.domain.Categoria;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value = "/categorias")
@@ -22,9 +22,44 @@ public class CategoriaResource {
 	CategoriaService service;
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> find(@PathVariable Integer id) {
+	public ResponseEntity<Optional<Categoria>> buscar(@PathVariable Integer id) {
 		Optional<Categoria> c = service.buscar(id);
 		return ResponseEntity.ok().body(c);
 	}
-	
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<List<CategoriaDTO>> buscarTodos() {
+		List<Categoria> list = service.buscarTodos();
+		List<CategoriaDTO> listDTO = list.stream().map(obj -> new CategoriaDTO(obj))
+				.collect(Collectors.toList());
+
+		return ResponseEntity.ok().body(listDTO);
+	}
+
+	/*
+	 * ResponseEntity<Void> - resposta com o corpo vazio
+	 * @RequestBody         - para construir os dados apartir do objeto Json enviado
+	 * */
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<Void> insert(@RequestBody Categoria categoria){
+		Categoria cat = service.inserir(categoria);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}").buildAndExpand(cat.getId()).toUri();
+
+		return ResponseEntity.created(uri).build();
+	}
+
+	@RequestMapping(value = "/{id}",method = RequestMethod.PUT)
+	public ResponseEntity<Void> atualizar(@PathVariable Integer id, @RequestBody Categoria categoria){
+		categoria.setId(id);
+		service.atualizar(categoria);
+		return ResponseEntity.noContent().build();
+	}
+
+	@RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+	public ResponseEntity<Void> atualizar(@PathVariable Integer id){
+		service.deletar(id);
+		return ResponseEntity.noContent().build();
+	}
+
 }

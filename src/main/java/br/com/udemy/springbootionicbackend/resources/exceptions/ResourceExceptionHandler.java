@@ -1,5 +1,6 @@
 package br.com.udemy.springbootionicbackend.resources.exceptions;
 
+import br.com.udemy.springbootionicbackend.services.exceptions.DataIntegrityViolationException;
 import br.com.udemy.springbootionicbackend.services.exceptions.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,13 @@ public class ResourceExceptionHandler {
         //Devolve um objeto do StandardError populado com o status, a mensagem e o tempo
         StandardError err = new StandardError(HttpStatus.NOT_FOUND.value(), e.getMessage(), System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<StandardError> dataIntegrityViolation(DataIntegrityViolationException e, HttpServletRequest request){
+        //Devolve um objeto do StandardError populado com o status, a mensagem e o tempo
+        StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 
 }

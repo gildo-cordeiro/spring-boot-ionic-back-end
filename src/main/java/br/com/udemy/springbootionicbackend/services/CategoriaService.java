@@ -1,6 +1,7 @@
 package br.com.udemy.springbootionicbackend.services;
 
 import br.com.udemy.springbootionicbackend.domain.Categoria;
+import br.com.udemy.springbootionicbackend.dto.CategoriaDTO;
 import br.com.udemy.springbootionicbackend.repositories.CategoriaRepository;
 import br.com.udemy.springbootionicbackend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +55,9 @@ public class CategoriaService {
     public Page<Categoria> buscarPagina(Integer page, Integer linhasPorLinha, String ordernador, String direcao){
         PageRequest pageRequest = PageRequest.of(page, linhasPorLinha, Sort.Direction.valueOf(direcao), ordernador);
         return repository.findAll(pageRequest);
+    }
+
+    public Categoria fromDTO(CategoriaDTO categoriaDTO){
+        return new Categoria(categoriaDTO.getId(), categoriaDTO.getNome());
     }
 }

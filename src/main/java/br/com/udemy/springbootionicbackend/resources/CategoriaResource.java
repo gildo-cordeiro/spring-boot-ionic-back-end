@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import br.com.udemy.springbootionicbackend.domain.Categoria;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/categorias")
 public class CategoriaResource {
@@ -33,8 +35,9 @@ public class CategoriaResource {
 	 * @RequestBody         - para construir os dados apartir do objeto Json enviado
 	 * */
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@RequestBody Categoria categoria){
-		Categoria cat = service.inserir(categoria);
+	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO categoria){
+		Categoria obj = service.fromDTO(categoria);
+		Categoria cat = service.inserir(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(cat.getId()).toUri();
 
